@@ -7,7 +7,7 @@ trigger:
 - main
 
 steps:
-- script: echo Hello, world!
+- script: echo Hellssso, world!
   displayName: 'Run a one-line script'
 
 - script: |
