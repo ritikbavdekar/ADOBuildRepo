@@ -10,7 +10,7 @@ pool:
   name: TestAgentPool
 
 steps:
-- script: echo Hello, world!
+- script: echo Hello, whhjorld!
   displayName: 'Run a one-line script'
 
 - script: |
